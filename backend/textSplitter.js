@@ -1,16 +1,20 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { readFile } from 'fs/promises';
 
-try {
-  const result=await readFile('./temp.txt', 'utf-8');
-  const text=await result.text()
-  const splitter=new RecursiveCharacterTextSplitter({
-    chunkSize: 1000,
-    chunkOverlap: 200,
-  });
-  const docs = await splitter.createDocuments([text]);
-  console.log(docs);
+async function main() {
+  try {
+    const result = await readFile('./temp.txt', 'utf-8'); 
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+      separators: ['\n\n', '\n', ' ', ''],
+    });
+    const docs = await splitter.createDocuments([result]);
+    console.log(docs);
 
-} catch (error) {
-  
+  } catch (error) {
+    console.error(error); 
+  }
 }
+
+main();
