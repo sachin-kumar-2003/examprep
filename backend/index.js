@@ -5,7 +5,7 @@ import { readFile } from "fs/promises";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { createClient } from "@supabase/supabase-js";
-import {supabaseVectorStore} from "@langchain/vectorstores/supabase";
+import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 
 async function generateStory(topic) {
   const model = new ChatGoogleGenerativeAI({
@@ -37,25 +37,33 @@ async function embedAndStore() {
     });
     const chunks = await textSplitter.splitText(text);
 
+    // convert chunks into documents
+    const docs = chunks.map(chunk => ({
+      pageContent: chunk,
+      metadata: {},
+    }));
+
     // Initialize embeddings model
     const embeddings = new GoogleGenerativeAIEmbeddings({
       model: "embedding-001",
       apiKey: process.env.GOOGLE_API_KEY,
     });
-    // KEYS 
-    const sbiApiKey=process.env.SUPERBASE_API_KEY;
-    const sbiUrl=process.env.SUPERBASE_URL;
-    const googleApiKey=process.env.GOOGLE_API_KEY;
 
-    client=createClient(sbiUrl, sbiApiKey);
-    await supabaseVectorStore.fromDocuments(chunks, embeddings, {
-      client,
+    // KEYS 
+    const sbiApiKey = process.env.SUPERBASE_API_KEY;
+    const sbiUrl = process.env.SUPERBASE_URL;
+
+    const client = createClient(sbiUrl, sbiApiKey);
+
+    const vectorStore = new SupabaseVectorStore(embeddings, {
+      client: client,
       tableName: "documents",
-      queryName: "text_search",
-      embeddingColumnName: "embedding",
-      textColumnName: "text",
+      queryName: "match_documents",
     });
-    
+
+    // Store the docs (not plain chunks) in Supabase
+    await vectorStore.addDocuments(docs);
+    console.log("Documents embedded and stored successfully.");
   } catch (error) {
     console.error("Error embedding and storing documents:", error);
   }
