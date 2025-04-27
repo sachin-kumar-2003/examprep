@@ -1,7 +1,8 @@
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { readFile } from 'fs/promises';
-
+import { config } from "dotenv";
+config();
 async function main() {
   try {
 
@@ -12,11 +13,13 @@ async function main() {
       chunkSize: 500,
       chunkOverlap: 50,
     });
+
+    const googleApiKey=process.env.GOOGLE_API_KEY;
     const docs = await splitter.createDocuments([result]);
     console.log(`Split into ${docs.length} documents.`);
     const embeddings = new GoogleGenerativeAIEmbeddings({
       model: "embedding-001", 
-      apiKey: process.env.GOOGLE_API_KEY, 
+      apiKey: googleApiKey, 
     });
 
      const vectors = await Promise.all(
