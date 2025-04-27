@@ -9,7 +9,7 @@ dotenv.config();
 
 async function main() {
   const result = await readFile('./temp.txt');
-  const text = result.toString();   // Notice: toString instead of .text()
+  const text = result.toString();   
 
   const splitter = new RecursiveCharacterTextSplitter();
   const docs = await splitter.createDocuments([text]);
