@@ -14,7 +14,7 @@
     "@huggingface/inference": "^2.8.1",
     "@langchain/aws": "^0.1.9",
     "@langchain/community": "^0.3.41",
-    "@langchain/core": "^0.3.49",
+    "@langchain/core": "^0.3.50",
     "@langchain/google-genai": "^0.2.5",
     "@supabase/supabase-js": "^2.49.4",
     "dotenv": "^16.5.0",
