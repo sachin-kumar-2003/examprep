@@ -1,6 +1,6 @@
-
-function combineDocument(docs){
-  return docs.map(doc => doc.pageContent).join("\n\n");
-}
-
-export { combineDocument };
+// utils/combineDocument.js
+export const combineDocument = {
+  async invoke(documents) {
+    return documents.map(doc => doc.pageContent).join("\n---\n");
+  },
+};

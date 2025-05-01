@@ -1,82 +1,80 @@
+// gemini-stream.js
 import { config } from "dotenv";
 config();
+
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { readFile } from "fs/promises";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { combineDocument } from "./utils/combineDocument.js";
 
-async function generateStory(topic) {
-  const model = new ChatGoogleGenerativeAI({
-    model: "gemini-2.0-flash",
-    maxOutputTokens: 2048,
-    apiKey: process.env.GOOGLE_API_KEY,
-  });
+// Environment variables
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_API_KEY = process.env.SUPABASE_API_KEY;
 
-  const prompt = `Generate a story about ${topic}.`;
+// 1. Setup Embeddings and Supabase Vector Store
+const embeddings = new GoogleGenerativeAIEmbeddings({
+  model: "embedding-001",
+  apiKey: GOOGLE_API_KEY,
+});
 
-  const res = await model.invoke([
-    { role: "user", content: prompt }
-  ]);
+const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
 
-  return res.text;
-}
+const vectorStore = new SupabaseVectorStore(embeddings, {
+  client: client,
+  tableName: "documents",
+  queryName: "match_documents",
+});
 
-async function embedAndStore() {
+const retriever = vectorStore.asRetriever();
+
+// 2. LLM Instance
+const llm = new ChatGoogleGenerativeAI({
+  model: "gemini-2.0-flash",
+  apiKey: GOOGLE_API_KEY,
+  maxOutputTokens: 2048,
+});
+
+// 3. Prompts
+const standalonePrompt = ChatPromptTemplate.fromTemplate(
+  "Given a question, convert it into a standalone question.\n\nQuestion: {question}"
+);
+
+const answerPrompt = ChatPromptTemplate.fromTemplate(
+  `Answer the question based on the context below. If the answer is not in the context, say "I don't know".\n\nContext:\n{context}\n\nQuestion:\n{question}\n\nAnswer:`
+);
+
+// 4. Answer Function
+async function answerUserQuestion(userInput) {
   try {
-    // file reading
-    const file = await readFile("./temp.txt");
-    const text = file.toString();
+    // Step 1: Reformulate into a standalone question
+    const standaloneChain = standalonePrompt.pipe(llm).pipe(new StringOutputParser());
+    const standaloneQuestion = await standaloneChain.invoke({ question: userInput });
+    // console.log("Standalone Question:", standaloneQuestion);
 
-    // making chunks
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 500,
-      separators: ["\n\n", "\n", " ", "##"],
-      chunkOverlap: 50,
-    });
-    const chunks = await textSplitter.splitText(text);
+    // Step 2: Retrieve matching documents
+    const matchedDocs = await retriever.invoke(standaloneQuestion);
+    // console.log(`Found ${matchedDocs.length} documents.`);
 
-    // convert chunks into documents
-    const docs = chunks.map(chunk => ({
-      pageContent: chunk,
-      metadata: {},
-    }));
+    // Step 3: Combine retrieved context
+    const context = await combineDocument.invoke(matchedDocs);
 
-    // Initialize embeddings model
-    const embeddings = new GoogleGenerativeAIEmbeddings({
-      model: "embedding-001",
-      apiKey: process.env.GOOGLE_API_KEY,
+    // Step 4: Generate final answer
+    const finalChain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
+    const answer = await finalChain.invoke({
+      context,
+      question: standaloneQuestion,
     });
 
-    // KEYS 
-    const sbiApiKey = process.env.SUPERBASE_API_KEY;
-    const sbiUrl = process.env.SUPERBASE_URL;
-
-    const client = createClient(sbiUrl, sbiApiKey);
-
-    const vectorStore = new SupabaseVectorStore(embeddings, {
-      client: client,
-      tableName: "documents",
-      queryName: "match_documents",
-    });
-
-    // Store the docs (not plain chunks) in Supabase
-    await vectorStore.addDocuments(docs);
-    console.log("Documents embedded and stored successfully.");
-  } catch (error) {
-    console.error("Error embedding and storing documents:", error);
+    console.log("\n✅ Final Answer:\n", answer);
+  } catch (err) {
+    console.error("❌ Error during question processing:", err.message);
   }
 }
 
-async function main() {
-  try {
-    
-    // Call the new embedding and storing function
-    await embedAndStore();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-main().catch(console.error);
+// Example usage:
+const userQuestion = "Why was Nutsy different from his siblings?";
+await answerUserQuestion(userQuestion);
