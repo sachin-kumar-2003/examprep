@@ -1,8 +1,8 @@
 // gemini-stream.js
 import 'dotenv/config'; 
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 
 // document.addEventListener('click', function (event) {
@@ -10,7 +10,7 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 //   run();
 // });
 
-const embedding= new GoogleGenerativeAIEmbeddings({
+const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "embedding-001",
   apiKey: process.env.GOOGLE_API_KEY,
 });
@@ -26,20 +26,21 @@ const vectorStore = new superbase.SupabaseVectorStore({
   embeddingColumnName: "embedding",
   textColumnName: "text",
   metadataColumnName: "metadata",
+  queryName: "match_documents",
 });
 
-const googleApiKey = process.env.GOOGLE_API_KEY;
+const retriever = vectorStore.asRetriever();
+
+// const googleApiKey = process.env.GOOGLE_API_KEY;
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
   maxOutputTokens: 2048,
-  apiKey: googleApiKey,
+  apiKey: process.env.GOOGLE_API_KEY,
 });
 
 
 const standAloneQuestion= 'given  a question convert it into a stand alone question. question: {question}';
 const standAloneQuestionPrompt = ChatPromptTemplate.fromTemplate(standAloneQuestion);
-const standAloneQuestionChain = standAloneQuestionPrompt.pipe(llm);
-const response = await standAloneQuestionChain.invoke({ question: "What is the capital of France?" });
- 
-
+const standAloneQuestionChain = standAloneQuestionPrompt.pipe(llm).pipe(retriever);
+const response = await standAloneQuestionChain.invoke({ question: 'Why was Nutsy different from his siblings?' });
 console.log(response.text);
