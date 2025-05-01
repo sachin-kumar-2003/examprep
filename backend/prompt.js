@@ -5,6 +5,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 // document.addEventListener('click', function (event) {
 //   event.preventDefault();
 //   run();
@@ -39,6 +40,8 @@ const llm = new ChatGoogleGenerativeAI({
 
 const standAloneQuestion= 'given  a question convert it into a stand alone question. question: {question}';
 const standAloneQuestionPrompt = ChatPromptTemplate.fromTemplate(standAloneQuestion);
-const standAloneQuestionChain = standAloneQuestionPrompt.pipe(llm).pipe(retriever);
+const standAloneQuestionChain = standAloneQuestionPrompt.pipe(llm);
 const response = await standAloneQuestionChain.invoke({ question: 'Why was Nutsy different from his siblings?' });
-console.log(response.text);
+const response2=await retriever.invoke('Why was Nutsy different from his siblings?');
+console.log(response)
+console.log(response2);
