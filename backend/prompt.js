@@ -4,10 +4,10 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 
-document.addEventListener('click', function (event) {
-  event.preventDefault();
-  run();
-});
+// document.addEventListener('click', function (event) {
+//   event.preventDefault();
+//   run();
+// });
 
 const googleApiKey = process.env.GOOGLE_API_KEY;
 const llm = new ChatGoogleGenerativeAI({
