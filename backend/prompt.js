@@ -8,21 +8,19 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { combineDocument } from "./utils/combineDocument.js";
-// document.addEventListener('click', function (event) {
-//   event.preventDefault();
-//   run();
-// });
 
+// Environment variables
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const SUPABASE_URL = process.env.SUPERBASE_URL;
+const SUPABASE_API_KEY = process.env.SUPERBASE_API_KEY;
+
+// 1. Setup Embeddings and Supabase Vector Store
 const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "embedding-001",
-  apiKey: process.env.GOOGLE_API_KEY,
+  apiKey: GOOGLE_API_KEY,
 });
 
-const sbiApiKey = process.env.SUPERBASE_API_KEY;
-const sbiUrl = process.env.SUPERBASE_URL;
-const client = createClient(sbiUrl, sbiApiKey);
-
-
+const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
 
 const vectorStore = new SupabaseVectorStore(embeddings, {
   client: client,
@@ -32,24 +30,50 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
 
 const retriever = vectorStore.asRetriever();
 
-// const googleApiKey = process.env.GOOGLE_API_KEY;
+// 2. LLM Instance
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
+  apiKey: GOOGLE_API_KEY,
   maxOutputTokens: 2048,
-  apiKey: process.env.GOOGLE_API_KEY,
 });
-const answerTemplate = `Answer the question based on the context below. If the answer is not in the context, say "I don't know".\n\nContext:\n{context}\n\nQuestion:\n{question}\n\nAnswer:`;
 
-const answerPrompt = ChatPromptTemplate.fromTemplate(answerTemplate);
+// 3. Prompts
+const standalonePrompt = ChatPromptTemplate.fromTemplate(
+  "Given a question, convert it into a standalone question.\n\nQuestion: {question}"
+);
 
+const answerPrompt = ChatPromptTemplate.fromTemplate(
+  `Answer the question based on the context below. If the answer is not in the context, say "I don't know i have only knowledge of GEHU IT related syllabus related information. ".\n\nContext:\n{context}\n\nQuestion:\n{question}\n\nAnswer:`
+);
 
+// 4. Answer Function
+async function answerUserQuestion(userInput) {
+  try {
+    // Step 1: Reformulate into a standalone question
+    const standaloneChain = standalonePrompt.pipe(llm).pipe(new StringOutputParser());
+    const standaloneQuestion = await standaloneChain.invoke({ question: userInput });
+    console.log("Standalone Question:", standaloneQuestion);
 
+    // Step 2: Retrieve matching documents
+    const matchedDocs = await retriever.invoke(standaloneQuestion);
+    console.log(`Found ${matchedDocs.length} documents.`);
 
-const standAloneQuestion= 'given  a question convert it into a stand alone question. question: {question}';
-const standAloneQuestionPrompt = ChatPromptTemplate.fromTemplate(standAloneQuestion);
+    // Step 3: Combine retrieved context
+    const context = await combineDocument.invoke(matchedDocs);
 
+    // Step 4: Generate final answer
+    const finalChain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
+    const answer = await finalChain.invoke({
+      context,
+      question: standaloneQuestion,
+    });
 
+    console.log("\nAnswer \n", answer);
+  } catch (err) {
+    console.error("Error during question processing:", err.message);
+  }
+}
 
-const chain = standAloneQuestionPrompt.pipe(llm).pipe(new StringOutputParser()).pipe(retriever).pipe(combineDocument);
-const response = await chain.invoke({ question: 'Why was Nutsy different from his siblings?' });
-console.log(response); 
+// Example usage:
+const userQuestion = "What is time ?";
+await answerUserQuestion(userQuestion);
