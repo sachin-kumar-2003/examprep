@@ -1,10 +1,10 @@
 // gemini-stream.js
-import 'dotenv/config'; 
-import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { config } from "dotenv";
+config();
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
-
 // document.addEventListener('click', function (event) {
 //   event.preventDefault();
 //   run();
@@ -20,12 +20,10 @@ const sbiUrl = process.env.SUPERBASE_URL;
 const client = createClient(sbiUrl, sbiApiKey);
 
 
-const vectorStore = new superbase.SupabaseVectorStore({
+
+const vectorStore = new SupabaseVectorStore(embeddings, {
   client: client,
   tableName: "documents",
-  embeddingColumnName: "embedding",
-  textColumnName: "text",
-  metadataColumnName: "metadata",
   queryName: "match_documents",
 });
 
