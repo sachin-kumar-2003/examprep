@@ -3,11 +3,30 @@ import 'dotenv/config';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 
 // document.addEventListener('click', function (event) {
 //   event.preventDefault();
 //   run();
 // });
+
+const embedding= new GoogleGenerativeAIEmbeddings({
+  model: "embedding-001",
+  apiKey: process.env.GOOGLE_API_KEY,
+});
+
+const sbiApiKey = process.env.SUPERBASE_API_KEY;
+const sbiUrl = process.env.SUPERBASE_URL;
+const client = createClient(sbiUrl, sbiApiKey);
+
+
+const vectorStore = new superbase.SupabaseVectorStore({
+  client: client,
+  tableName: "documents",
+  embeddingColumnName: "embedding",
+  textColumnName: "text",
+  metadataColumnName: "metadata",
+});
 
 const googleApiKey = process.env.GOOGLE_API_KEY;
 const llm = new ChatGoogleGenerativeAI({
@@ -21,6 +40,6 @@ const standAloneQuestion= 'given  a question convert it into a stand alone quest
 const standAloneQuestionPrompt = ChatPromptTemplate.fromTemplate(standAloneQuestion);
 const standAloneQuestionChain = standAloneQuestionPrompt.pipe(llm);
 const response = await standAloneQuestionChain.invoke({ question: "What is the capital of France?" });
-
+ 
 
 console.log(response.text);
