@@ -7,6 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
+import { combineDocument } from "./utils/combineDocument.js";
 // document.addEventListener('click', function (event) {
 //   event.preventDefault();
 //   run();
@@ -41,10 +42,6 @@ const answerTemplate = `Answer the question based on the context below. If the a
 
 const answerPrompt = ChatPromptTemplate.fromTemplate(answerTemplate);
 
-
-function combineDocument(docs){
-  return docs.map(doc => doc.pageContent).join("\n\n");
-}
 
 
 
