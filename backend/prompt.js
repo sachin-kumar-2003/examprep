@@ -6,6 +6,7 @@ import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
 // document.addEventListener('click', function (event) {
 //   event.preventDefault();
 //   run();
@@ -36,12 +37,22 @@ const llm = new ChatGoogleGenerativeAI({
   maxOutputTokens: 2048,
   apiKey: process.env.GOOGLE_API_KEY,
 });
+const answerTemplate = `Answer the question based on the context below. If the answer is not in the context, say "I don't know".\n\nContext:\n{context}\n\nQuestion:\n{question}\n\nAnswer:`;
+
+const answerPrompt = ChatPromptTemplate.fromTemplate(answerTemplate);
+
+
+function combineDocument(docs){
+  return docs.map(doc => doc.pageContent).join("\n\n");
+}
+
 
 
 const standAloneQuestion= 'given  a question convert it into a stand alone question. question: {question}';
 const standAloneQuestionPrompt = ChatPromptTemplate.fromTemplate(standAloneQuestion);
-const standAloneQuestionChain = standAloneQuestionPrompt.pipe(llm);
-const response = await standAloneQuestionChain.invoke({ question: 'Why was Nutsy different from his siblings?' });
-const response2=await retriever.invoke('Why was Nutsy different from his siblings?');
-console.log(response)
-console.log(response2);
+
+
+
+const chain = standAloneQuestionPrompt.pipe(llm).pipe(new StringOutputParser()).pipe(retriever).pipe(combineDocument);
+const response = await chain.invoke({ question: 'Why was Nutsy different from his siblings?' });
+console.log(response); 
