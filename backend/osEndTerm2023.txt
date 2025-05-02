@@ -1,0 +1,53 @@
+M.C.A. (FIRST SEMESTER) MID SEMESTER EXAMINATION, Jan., 2023 OPERATING SYSTEM
+
+Time: 1 1/2 Hours Maximum Marks: 50
+
+Note: (i) Answer all the questions by choosing any one of the sub-questions. (ii) Each sub-question carries 10 marks.
+
+1.  (a) Define OS. Explain the different types of OS with example. (CO1)
+
+    OR
+
+    (b) Define Kernel. Explain the various types of Kernels with example. (CO1)
+2.  (a) Draw and explain the various states of a process. (CO1/CO2)
+
+    OR
+
+    (b) Differentiate between the following: (CO1/CO2)
+
+    * (i) Multiprogramming vs. Multitasking OS
+    * (ii) System call vs. Functions
+3.  (a) Draw and explain the PCB. Also explain the PCB in memory. (CO2)
+
+    OR
+
+    (b) Differentiate between the following:
+
+    * (i) Process vs. Threads (CO1)
+    * (ii) Open-source vs. Commercial OS (CO1/CO2)
+4.  (a) Explain different types of schedulers and various queues.
+
+    OR
+
+    (b) Calculate Average waiting time, Average TAT, throughput, CPU utilization for the following: (CO1/CO2)
+
+    | Process | Arrival Time | CPU Burst Time (in millisec.) |
+    | --- | --- | --- |
+    | P0 | 3 | 2 |
+    | P1 | 2 | 4 |
+    | P2 | 0 | 6 |
+    | P3 | 1 | 4 |
+
+    using FCFS scheduling Algorithm.
+5.  (a) Draw and explain the various services of OS. (CO1/CO2)
+
+    OR
+
+    (b) Calculate Average waiting time, Average TAT, throughput, CPU utilization for non-preemptive SJF scheduling for the following (CO1/CO2)
+
+    | Process | Burst Time |
+    | --- | --- |
+    | P1 | 6 |
+    | P2 | 8 |
+    | P3 | 7 |
+    | P4 | 3 |

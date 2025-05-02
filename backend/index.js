@@ -26,7 +26,7 @@ async function generateStory(topic) {
 async function embedAndStore() {
   try {
     // file reading
-    const file = await readFile("./temp.txt");
+    const file = await readFile("./osEndTerm2023.txt");
     const text = file.toString();
 
     // making chunks
