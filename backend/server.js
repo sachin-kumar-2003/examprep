@@ -1,7 +1,8 @@
-// gemini-memory.js
 import { config } from "dotenv";
 config();
 
+import express from "express";
+import cors from "cors";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { createClient } from "@supabase/supabase-js";
@@ -11,36 +12,35 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { combineDocument } from "./utils/combineDocument.js";
 import { formatConversation } from "./utils/formatConversation.js";
 
-// Environment variables
+// ENV
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const SUPABASE_URL = process.env.SUPERBASE_URL;
 const SUPABASE_API_KEY = process.env.SUPERBASE_API_KEY;
 
-// Setup embeddings and vector store
+// Embeddings and Supabase Vector Store
 const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "embedding-001",
   apiKey: GOOGLE_API_KEY,
 });
 const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
 const vectorStore = new SupabaseVectorStore(embeddings, {
-  client: client,
+  client,
   tableName: "documents",
   queryName: "match_documents",
 });
 const retriever = vectorStore.asRetriever();
 
-// Gemini LLM
+// LLM and prompt
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-1.5-pro-latest",
   apiKey: GOOGLE_API_KEY,
   maxOutputTokens: 2048,
 });
 
-// Prompt Template (includes chat history and context)
 const answerPrompt = ChatPromptTemplate.fromTemplate(
-`You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation.
+  `You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation.
 
-Use both the **context** (knowledge base) and the **conversation history** to answer the user's question.
+Use both the context (knowledge base) and the conversation history to answer the user's question.
 
 If you don't know the answer based on either, say:
 "Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
@@ -57,42 +57,41 @@ Current Question:
 Answer:`
 );
 
-
-
-// Main function
+// Main logic
 async function answerUserQuestion(userQuestion, chatHistory) {
-  try {
-    const formattedHistory = formatConversation(chatHistory);
+  const formattedHistory = formatConversation(chatHistory);
+  const relevantDocs = await retriever.invoke(userQuestion);
+  const context = await combineDocument.invoke(relevantDocs);
 
-    // Retrieve context
-    const relevantDocs = await retriever.invoke(userQuestion);
-    const context = await combineDocument.invoke(relevantDocs);
-
-    // Build chain
-    const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
-
-    // Get answer
-    const answer = await chain.invoke({
-      context,
-      conv_history: formattedHistory,
-      question: userQuestion,
-    });
-
-    console.log("Answer:", answer);
-    return answer;
-  } catch (err) {
-    console.error("Error:", err.message);
-  }
+  const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
+  const answer = await chain.invoke({
+    context,
+    conv_history: formattedHistory,
+    question: userQuestion,
+  });
+  return answer;
 }
 
-// Example usage
-export const run = async ({question,}) => {
-  const history = [];
-  const q1 = question;
-  const a1 = await answerUserQuestion(q1, history);
-  console.log("User Question:", q1);
-  console.log("AI Answer:", a1);
-  history.push({ user: q1, bot: a1 });
-};
+// Express Server Setup
+const app = express();
+const port = process.env.PORT || 5000;
 
+app.use(cors());
+app.use(express.json());
 
+// Chat API Endpoint
+app.post("/api/chat", async (req, res) => {
+  const { message, history } = req.body;
+  console.log(message, history)
+});
+
+// Start server
+
+app.get("/", (req, res) => {
+  res.send("Hello from the backend!");
+
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
