@@ -1,4 +1,7 @@
 import { useState } from "react";
+import HeroHeader from "./HeroHeader";
+import { FiSend } from "react-icons/fi"; // Feather Icons
+
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/chat";
 
@@ -53,9 +56,13 @@ const ChatWindow = () => {
   
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 min-h-screen bg-gray-100">
+    <div className="w-full max-w-2xl mx-auto p-4 min-h-screen bg-gray-100 flex flex-col justify-evenly">
       <h1 className="text-2xl font-bold mb-4 text-center">Exam Prep AI</h1>
-
+      {messages.length === 0 && (
+        <div className="text-center text-gray-500 mb-4">
+          <HeroHeader />
+        </div>
+      )}
       <div className="space-y-3 overflow-y-auto max-h-[60vh] mb-4">
         {messages.map((msg, idx) => (
           <div
@@ -81,9 +88,11 @@ const ChatWindow = () => {
         />
         <button
           onClick={handleSend}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          className="bg-blue-500 text-white px-6 py-4 rounded-lg"
         >
-          Send
+          {/* use the send icon using react icons */}
+          <FiSend className="text-white text-xl" />
+         
         </button>
       </div>
     </div>
