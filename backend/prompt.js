@@ -34,27 +34,31 @@ const retriever = vectorStore.asRetriever();
 
 // 2. LLM Instance
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.0-flash", // better context tracking
   apiKey: GOOGLE_API_KEY,
   maxOutputTokens: 2048,
 });
 
 // 3. Prompts
 const standalonePrompt = ChatPromptTemplate.fromTemplate(
-  "Given a question, convert it into a standalone question.\n\nQuestion: {question}"
+  `Given a question and the conversation history, convert it into a standalone question that includes any important context from the conversation.\n\nConversation History:\n{conv_history}\n\nFollow-up Question:\n{question}\n\nStandalone Question:`
 );
 
 const answerPrompt = ChatPromptTemplate.fromTemplate(
-  `Answer the question based on the context below. If the answer is not in the context, say "I don't know".\n\nContext:\n{context}\n\nQuestion:\n{question}\n\nAnswer:`
+  `Answer the question based on the context below. If the answer is not in the context, say "Sorry.. I don't know I contain only GEHU BCA and MCA related Data..".\n\nContext:\n{context}\n\nQuestion:\n{question}\n\nAnswer:`
 );
 
 // 4. Answer Function
-async function answerUserQuestion(userInput) {
+async function answerUserQuestion(question, conv_history) {
   try {
+    const formattedHistory = formatConversation(conv_history);
+
     // Step 1: Reformulate into a standalone question
     const standaloneChain = standalonePrompt.pipe(llm).pipe(new StringOutputParser());
-    const standaloneQuestion = await standaloneChain.invoke({ question: userInput });
-    console.log("Standalone Question:", standaloneQuestion);
+    const standaloneQuestion = await standaloneChain.invoke({
+      question,
+      conv_history: formattedHistory,
+    });
 
     // Step 2: Retrieve matching documents
     const matchedDocs = await retriever.invoke(standaloneQuestion);
@@ -70,18 +74,24 @@ async function answerUserQuestion(userInput) {
       question: standaloneQuestion,
     });
 
-    console.log("\n✅ Final Answer:\n", answer);
+    console.log("\nFinal Answer:\n", answer);
     return answer;
   } catch (err) {
-    console.error("❌ Error during question processing:", err.message);
+    console.error("Error during question processing:", err.message);
   }
 }
 
-// Example usage:
-const userQuestion = "Why was Nutsy different from his siblings?";
-let ans=await answerUserQuestion(userQuestion);
-const coverHistory=[]
+// 5. Run example usage
+const run = async () => {
+  const conversationHistory = [];
 
-coverHistory.push(userQuestion)
-coverHistory.push(ans)
+  const userQuestion1 = "Hi my name is sachin and Why was Nutsy different from his siblings?";
+  const ans1 = await answerUserQuestion(userQuestion1, conversationHistory);
+  conversationHistory.push({ user: userQuestion1, bot: ans1 });
 
+  const userQuestion2 = "What is my name ?";
+  const ans2 = await answerUserQuestion(userQuestion2, conversationHistory);
+  conversationHistory.push({ user: userQuestion2, bot: ans2 });
+};
+
+run();
