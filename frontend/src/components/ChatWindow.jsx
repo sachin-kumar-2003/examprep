@@ -54,7 +54,7 @@ const ChatWindow = () => {
 
   return (
     <div className="w-full max-w-2xl mx-auto p-4 min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4 text-center">Gemini Chat</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Exam Prep AI</h1>
 
       <div className="space-y-3 overflow-y-auto max-h-[60vh] mb-4">
         {messages.map((msg, idx) => (
@@ -67,7 +67,7 @@ const ChatWindow = () => {
             {msg.content}
           </div>
         ))}
-        {loading && <div className="text-gray-500">Gemini is typing...</div>}
+        {loading && <div className="text-gray-500">Thinking...</div>}
       </div>
 
       <div className="flex gap-2">

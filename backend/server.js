@@ -82,7 +82,13 @@ app.use(express.json());
 // Chat API Endpoint
 app.post("/api/chat", async (req, res) => {
   const { message, history } = req.body;
-  console.log(message, history)
+  try {
+    const answer = await answerUserQuestion(message, history);
+    res.json({ answer });
+  } catch (error) {
+    console.error("Error processing request:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 // Start server
