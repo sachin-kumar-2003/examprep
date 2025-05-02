@@ -9,6 +9,7 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { combineDocument } from "./utils/combineDocument.js";
+import { formatConversation } from "./utils/formatConversation.js";
 
 // Environment variables
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -56,12 +57,7 @@ Current Question:
 Answer:`
 );
 
-// Format conversation as: User: ... | AI: ...
-function formatConversation(history) {
-  return history
-    .map((msg) => `User: ${msg.user}\nAI: ${msg.bot}`)
-    .join("\n");
-}
+
 
 // Main function
 async function answerUserQuestion(userQuestion, chatHistory) {
@@ -93,9 +89,9 @@ async function answerUserQuestion(userQuestion, chatHistory) {
 const run = async () => {
   const history = [];
 
-  // const q1 = "Hi, my name is Sachin. Why was Nutsy different from his siblings?";
-  // const a1 = await answerUserQuestion(q1, history);
-  // history.push({ user: q1, bot: a1 });
+  const q1 = "Hi, my name is Sachin. Why was Nutsy different from his siblings?";
+  const a1 = await answerUserQuestion(q1, history);
+  history.push({ user: q1, bot: a1 });
 
 };
 

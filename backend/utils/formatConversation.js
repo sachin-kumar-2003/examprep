@@ -1,6 +1,6 @@
 // utils/formatConversation.js
 export function formatConversation(history) {
   return history
-    .map((turn, i) => `User: ${turn.user}\nBot: ${turn.bot}`)
+    .map((msg) => `User: ${msg.user}\nAI: ${msg.bot}`)
     .join("\n");
 }
