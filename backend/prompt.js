@@ -1,4 +1,4 @@
-// gemini-stream.js
+// gemini-memory.js
 import { config } from "dotenv";
 config();
 
@@ -9,89 +9,94 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { combineDocument } from "./utils/combineDocument.js";
-import { formatConversation } from "./utils/formatConversation.js";
 
 // Environment variables
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const SUPABASE_URL = process.env.SUPERBASE_URL;
 const SUPABASE_API_KEY = process.env.SUPERBASE_API_KEY;
 
-// 1. Setup Embeddings and Supabase Vector Store
+// Setup embeddings and vector store
 const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "embedding-001",
   apiKey: GOOGLE_API_KEY,
 });
-
 const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
-
 const vectorStore = new SupabaseVectorStore(embeddings, {
   client: client,
   tableName: "documents",
   queryName: "match_documents",
 });
-
 const retriever = vectorStore.asRetriever();
 
-// 2. LLM Instance
+// Gemini LLM
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash", // better context tracking
+  model: "gemini-1.5-pro-latest",
   apiKey: GOOGLE_API_KEY,
   maxOutputTokens: 2048,
 });
 
-// 3. Prompts
-const standalonePrompt = ChatPromptTemplate.fromTemplate(
-  `Given a question and the conversation history, convert it into a standalone question that includes any important context from the conversation.\n\nConversation History:\n{conv_history}\n\nFollow-up Question:\n{question}\n\nStandalone Question:`
-);
-
+// Prompt Template (includes chat history and context)
 const answerPrompt = ChatPromptTemplate.fromTemplate(
-  `Answer the question based on the context below. If the answer is not in the context, say "Sorry.. I don't know I contain only GEHU BCA and MCA related Data..".\n\nContext:\n{context}\n\nQuestion:\n{question}\n\nAnswer:`
+`You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation.
+
+Use both the **context** (knowledge base) and the **conversation history** to answer the user's question.
+
+If you don't know the answer based on either, say:
+"Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
+
+Context:
+{context}
+
+Conversation History:
+{conv_history}
+
+Current Question:
+{question}
+
+Answer:`
 );
 
-// 4. Answer Function
-async function answerUserQuestion(question, conv_history) {
+// Format conversation as: User: ... | AI: ...
+function formatConversation(history) {
+  return history
+    .map((msg) => `User: ${msg.user}\nAI: ${msg.bot}`)
+    .join("\n");
+}
+
+// Main function
+async function answerUserQuestion(userQuestion, chatHistory) {
   try {
-    const formattedHistory = formatConversation(conv_history);
+    const formattedHistory = formatConversation(chatHistory);
 
-    // Step 1: Reformulate into a standalone question
-    const standaloneChain = standalonePrompt.pipe(llm).pipe(new StringOutputParser());
-    const standaloneQuestion = await standaloneChain.invoke({
-      question,
-      conv_history: formattedHistory,
-    });
+    // Retrieve context
+    const relevantDocs = await retriever.invoke(userQuestion);
+    const context = await combineDocument.invoke(relevantDocs);
 
-    // Step 2: Retrieve matching documents
-    const matchedDocs = await retriever.invoke(standaloneQuestion);
-    console.log(`Found ${matchedDocs.length} documents.`);
+    // Build chain
+    const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
 
-    // Step 3: Combine retrieved context
-    const context = await combineDocument.invoke(matchedDocs);
-
-    // Step 4: Generate final answer
-    const finalChain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
-    const answer = await finalChain.invoke({
+    // Get answer
+    const answer = await chain.invoke({
       context,
-      question: standaloneQuestion,
+      conv_history: formattedHistory,
+      question: userQuestion,
     });
 
-    console.log("\nFinal Answer:\n", answer);
+    console.log("Answer:", answer);
     return answer;
   } catch (err) {
-    console.error("Error during question processing:", err.message);
+    console.error("Error:", err.message);
   }
 }
 
-// 5. Run example usage
+// Example usage
 const run = async () => {
-  const conversationHistory = [];
+  const history = [];
 
-  const userQuestion1 = "Hi my name is sachin and Why was Nutsy different from his siblings?";
-  const ans1 = await answerUserQuestion(userQuestion1, conversationHistory);
-  conversationHistory.push({ user: userQuestion1, bot: ans1 });
+  // const q1 = "Hi, my name is Sachin. Why was Nutsy different from his siblings?";
+  // const a1 = await answerUserQuestion(q1, history);
+  // history.push({ user: q1, bot: a1 });
 
-  const userQuestion2 = "What is my name ?";
-  const ans2 = await answerUserQuestion(userQuestion2, conversationHistory);
-  conversationHistory.push({ user: userQuestion2, bot: ans2 });
 };
 
 run();
