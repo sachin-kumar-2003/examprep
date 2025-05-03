@@ -56,10 +56,10 @@ const ChatWindow = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 min-h-screen bg-gray-100 flex flex-col justify-between rounded-lg shadow-lg border border-gray-300">
+    <div className="w-full max-w-2xl mx-auto p-4 min-h-[90vh] bg-gray-100 flex flex-col justify-between rounded-lg shadow-lg border border-gray-300">
       <h1 className="text-2xl font-bold mb-4 text-center">Exam Prep AI</h1>
 
-      <div className="space-y-3 overflow-y-auto max-h-[60vh] mb-4">
+      <div className="space-y-3 overflow-y-auto max-h-[40vh] mb-4">
         {messages.map((msg, idx) => (
           <div
             key={idx}
