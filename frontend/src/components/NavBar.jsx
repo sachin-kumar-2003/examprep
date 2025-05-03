@@ -1,21 +1,32 @@
-import React from 'react'
+import React from 'react';
 
 const NavBar = () => {
   return (
-    <div className='flex justify-between items-center bg-dark h-[60px] shadow-lg px-10 py-4 mx-auto text-white sticky top-0 z-50 bg-sky-50'>
-      <div className='flex items-center w-[50%] justify-between px-6 py-2'>
-        <div className='flex items-center'>
-          {/* Logo icon */}
-          <span className='text-2xl mr-3'>✨</span>
-          <h1 className='text-xl font-bold ml-2 tracking-wide text-black'>ExamprepAI</h1>
+    <nav className="flex items-center justify-between p-4 bg-white shadow-xl ">
+      <div className="flex items-center">
+        <div className="bg-purple-500 p-2 rounded-full">
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2a10 10 0 00-7.071 17.071A10 10 0 0012 22a10 10 0 007.071-2.929A10 10 0 0012 2z"></path>
+          </svg>
         </div>
+        <span className="ml-2 text-xl font-bold text-gray-800">ExamprepAi</span>
+        <span className="ml-2 px-2 py-1 text-sm text-purple-500 bg-purple-100 rounded">AI Agent</span>
       </div>
-      <div className="flex flex-row-reverse gap-4 items-center w-[50%]">
-          <button className='bg-white text-gray-700 px-5 py-2 rounded-md font-semibold shadow-md hover:bg-gray-100 transition duration-300 ease-in-out'>Login</button>
-          <button className='bg-white text-gray-700 px-5 py-2 rounded-md font-semibold shadow-md hover:bg-gray-100 transition duration-300 ease-in-out'>Sign Up</button>
+      <div className="flex items-center space-x-4">
+        <a href="https://github.com" className="text-gray-500 hover:text-gray-800">
+          GitHub
+        </a>
+        
+      
+        <a href="#" className="text-gray-800 font-bold">
+          Live Preview
+        </a>
+        <button className="px-4 py-2 text-white bg-purple-500 rounded hover:bg-purple-600">
+          Login
+        </button>
       </div>
-    </div>
-  )
-}
+    </nav>
+  );
+};
 
-export default NavBar
+export default NavBar;

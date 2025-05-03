@@ -1,15 +1,18 @@
-import { useState } from "react";
-import HeroHeader from "./HeroHeader";
-import { FiSend, FiMenu } from "react-icons/fi";
+import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import HeroHeader from "./HeroHeader.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/chat";
 
 const ChatWindow = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -19,7 +22,6 @@ const ChatWindow = () => {
     setInput("");
     setLoading(true);
 
-    // Convert to history array: [{ user: ..., bot: ... }, ...]
     const formattedHistory = [];
     for (let i = 0; i < updatedMessages.length - 1; i += 2) {
       if (
@@ -44,11 +46,18 @@ const ChatWindow = () => {
       });
 
       const data = await response.json();
-      setMessages([...updatedMessages, { role: "bot", content: data.answer }]);
-    } catch (err) {
+
       setMessages([
         ...updatedMessages,
-        { role: "bot", content: "Error: Unable to get a response from the server." },
+        {
+          role: "bot",
+          content: data.answer || "⚠️ No response from server.",
+        },
+      ]);
+    } catch (error) {
+      setMessages([
+        ...updatedMessages,
+        { role: "bot", content: "❌ Error: Could not reach server." },
       ]);
     }
 
@@ -56,42 +65,52 @@ const ChatWindow = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 min-h-[90vh] bg-gray-100 flex flex-col justify-between rounded-lg shadow-lg border border-gray-300">
-      <h1 className="text-2xl font-bold mb-4 text-center">Exam Prep AI</h1>
+    <div className="h-full w-full flex items-center justify-center bg-white px-4 font-sans">
+      <div className="flex flex-col w-full max-w-3xl h-[100%] bg-white rounded-xl shadow-xl  overflow-hidden backdrop-blur-md bg-opacity-90">
+        
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 text-sm scrollbar-thin scrollbar-thumb-gray-400">
+          {messages.length === 0 && <HeroHeader />}
 
-      <div className="space-y-3 overflow-y-auto max-h-[40vh] mb-4">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`p-3 rounded-lg max-w-[80%] whitespace-pre-wrap ${
-              msg.role === "user" ? "bg-blue-200 self-start" : "bg-green-200 self-end ml-auto"
-            }`}
-          >
-            {msg.role === "bot" ? (
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`whitespace-pre-wrap p-4 rounded-xl leading-relaxed ${
+                msg.role === "user"
+                  ? "bg-gradient-to-r from-[#E6E6FA] to-[#D8BFD8] text-gray-800 self-end ml-auto border border-[#9370DB]"
+                  : "bg-gray-200 text-gray-700 self-start border border-gray-300"
+              }`}
+              style={{ maxWidth: "75%", wordWrap: "break-word" }}
+            >
               <ReactMarkdown>{msg.content}</ReactMarkdown>
-            ) : (
-              msg.content
-            )}
-          </div>
-        ))}
-        {loading && <div className="text-gray-500">...</div>}
-      </div>
+            </div>
+          ))}
+          
+          {loading && (
+            <div className="text-[#9370DB] italic animate-pulse">
+              Bot is typing...
+            </div>
+          )}
+          
+          <div ref={messagesEndRef} />
+        </div>
 
-      <div className="flex gap-2">
-        <input
-          type="text"
-          className="flex-1 p-2 border rounded-lg"
-          value={input}
-          placeholder="Type your message..."
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-        />
-        <button
-          onClick={handleSend}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-        >
-          Send
-        </button>
+        <div className="bg-white p-4 border-t border-gray-300 flex items-center gap-3">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            placeholder="Type your message..."
+            className="flex-1 bg-gray-100 text-gray-800 placeholder-[#9370DB] px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9370DB] transition-all"
+          />
+          <button
+            onClick={handleSend}
+            disabled={loading}
+            className="bg-[#9370DB] hover:bg-[#7A5F9A] text-white px-4 py-2 rounded-lg transition transform hover:scale-105 disabled:opacity-50"
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ function App() {
   return (
     <>
     <NavBar />
-     <div className="min-h-full bg-white-100 flex ">
+     <div className="min-h-[90vh] bg-white-100 flex ">
       <ChatWindow />
     </div>
     </>
