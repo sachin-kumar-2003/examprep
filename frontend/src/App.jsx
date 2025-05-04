@@ -5,7 +5,8 @@ function App() {
   return (
     <>
     <NavBar />
-     <div className="min-h-[90vh] bg-white-100 flex ">
+    <hr className="h-px border-0 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+    <div className="h-[80vh] bg-white-100 flex ">
       <ChatWindow />
     </div>
     </>
