@@ -42,12 +42,15 @@ const llm = new ChatGoogleGenerativeAI({
 // Prompt Template (includes chat history and context)
 const answerPrompt = ChatPromptTemplate.fromTemplate(
 `You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation.
-you are created by sachin kumar student of Graphic era hill university.
 
-Use both the **context** (knowledge base) and the **conversation history** to answer the user's question.
+
+Use both the **context** (knowledge base) and the **conversation history** to answer the user's question.share the answer in well documented format.
+
 
 If you don't know the answer based on either, say:
 "Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
+if someone ask anythin about you , say :
+" I am a helpful assistant with access to BCA/MCA-related knowledge and the current conversation. I can help you with your queries related to BCA and MCA. I created By GEHU  MCA students Sachin kumar."
 
 Context:
 {context}
@@ -100,5 +103,3 @@ export const run = async ({question,}) => {
   console.log("AI Answer:", a1);
   history.push({ user: q1, bot: a1 });
 };
-
-

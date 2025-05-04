@@ -87,7 +87,7 @@ const ChatWindow = () => {
           
           {loading && (
             <div className="text-[#9370DB] italic animate-pulse">
-              Bot is typing...
+              Thinking...
             </div>
           )}
           

@@ -1,258 +1,72 @@
-SOURCE: Operating Systems Q&A
-
----
-
-QUESTION NUMBER: 1
-What is an operating system?
-ANSWER: An operating system (OS) is system software that manages computer hardware and software resources and provides common services for computer programs.
-
----
-
-QUESTION NUMBER: 2
-What are the main functions of an operating system?
-ANSWER:
-- Process Management
-- Memory Management
-- File System Management
-- Device Management
-- Security and Access Control
-
----
-
-QUESTION NUMBER: 3
-Differentiate between system software and application software.
-ANSWER: System software manages hardware and provides services to application software (e.g., OS). Application software performs user-specific tasks (e.g., MS Word).
-
----
-
-QUESTION NUMBER: 4
-What is kernel? What are its types?
-ANSWER: The kernel is the core part of the OS that directly interacts with hardware. Types include:
-- Monolithic Kernel
-- Microkernel
-
----
-
-QUESTION NUMBER: 5
-Explain the concept of system calls in an operating system.
-ANSWER: System calls are interfaces that allow user-level programs to request services from the kernel (e.g., read, write, execute).
-
----
-
-QUESTION NUMBER: 6
-What is the difference between multitasking and multiprocessing?
-ANSWER:
-- Multitasking: Multiple tasks share the same CPU sequentially.
-- Multiprocessing: Multiple processors execute tasks simultaneously.
-
----
-
-QUESTION NUMBER: 7
-What is a process? How is it different from a program?
-ANSWER: A process is an instance of a program in execution. A program is a passive entity, whereas a process is active.
-
----
-
-QUESTION NUMBER: 8
-Define thread. How is it different from a process?
-ANSWER: A thread is the smallest unit of execution within a process. Threads share process resources, while processes have their own resources.
-
----
-
-QUESTION NUMBER: 9
-What is a context switch?
-ANSWER: It is the process of saving the state of one process and loading the state of another, allowing multitasking.
-
----
-
-QUESTION NUMBER: 10
-What is virtual memory, and why is it used?
-ANSWER: Virtual memory is a memory management technique that uses disk storage as an extension of RAM. It enables larger programs to run and improves multitasking.
-
----
-
-QUESTION NUMBER: 11
-What are the different states of a process in an operating system?
-ANSWER:
-- New
-- Ready
-- Running
-- Waiting
-- Terminated
-
----
-
-QUESTION NUMBER: 12
-Explain the concept of process scheduling.
-ANSWER: Process scheduling determines the order in which processes access the CPU based on scheduling algorithms.
-
----
-
-QUESTION NUMBER: 13
-What is a scheduling algorithm? Name a few types.
-ANSWER: A scheduling algorithm determines the order of process execution. Types include:
-- First Come First Serve (FCFS)
-- Shortest Job Next (SJN)
-- Round Robin (RR)
-- Priority Scheduling
-
----
-
-QUESTION NUMBER: 14
-Differentiate between preemptive and non-preemptive scheduling.
-ANSWER:
-- Preemptive: A process can be interrupted.
-- Non-preemptive: A process runs to completion without interruption.
-
----
-
-QUESTION NUMBER: 15
-What is round-robin scheduling, and how does it work?
-ANSWER: Each process is assigned a fixed time slice (quantum) in round-robin scheduling. Processes are executed cyclically.
-
----
-
-QUESTION NUMBER: 16
-What are the differences between short-term, medium-term, and long-term schedulers?
-ANSWER:
-- Short-term: Select processes for CPU execution.
-- Medium-term: Manages suspended processes.
-- Long-term: Manages job admission.
-
----
-
-QUESTION NUMBER: 17
-What is the file system in an operating system?
-ANSWER: The file system organizes and stores files on storage devices and manages file-related operations.
-
----
-
-QUESTION NUMBER: 18
-What are the different types of file systems?
-ANSWER:
-- FAT (File Allocation Table)
-- NTFS (New Technology File System)
-- ext (Extended File System)
-- HFS (Hierarchical File System)
-
----
-
-QUESTION NUMBER: 19
-What is the difference between absolute and relative paths?
-ANSWER:
-- Absolute Path: Specifies the complete path from the root directory.
-- Relative Path: Specifies the path relative to the current directory.
-
----
-
-QUESTION NUMBER: 20
-What is file allocation? Name a few techniques.
-ANSWER: File allocation determines how files are stored on disk. Techniques include:
-- Contiguous Allocation
-- Linked Allocation
-- Indexed Allocation
-
----
-
-QUESTION NUMBER: 21
-What is the inode in a file system?
-ANSWER: An inode is a data structure storing metadata about a file, such as size, permissions, and disk locations.
-
----
-
-QUESTION NUMBER: 22
-What is disk scheduling?
-ANSWER: Disk scheduling determines the order in which I/O requests are processed. Algorithms include FCFS, SSTF, and SCAN.
-
----
-
-QUESTION NUMBER: 23
-What is the difference between primary and secondary storage?
-ANSWER:
-- Primary Storage: Volatile memory (RAM).
-- Secondary Storage: Non-volatile storage (HDD, SSD).
-
----
-
-QUESTION NUMBER: 24
-What is caching in operating systems?
-ANSWER: Caching stores frequently accessed data in faster memory for quick retrieval.
-
----
-
-QUESTION NUMBER: 25
-What is the difference between a block and a sector in storage?
-ANSWER:
-- Sector: Smallest storage unit on a disk.
-- Block: Group of sectors treated as a single unit by the file system.
-
----
-
-QUESTION NUMBER: 26
-What is spooling?
-ANSWER: Spooling is a process where data is temporarily held to be used or executed later, commonly used in print queues.
-
----
-
-QUESTION NUMBER: 27
-What is the difference between a monolithic and a microkernel OS?
-ANSWER:
-- Monolithic Kernel: All OS services run in the kernel.
-- Microkernel: Only essential services run in the kernel; others run in user space.
-
----
-
-QUESTION NUMBER: 28
-What is time-sharing in operating systems?
-ANSWER: Time-sharing allows multiple users to use the system simultaneously by sharing CPU time.
-
----
-
-QUESTION NUMBER: 29
-What is an interrupt?
-ANSWER: An interrupt signals the CPU to stop current tasks and execute a specific piece of code.
-
----
-
-QUESTION NUMBER: 30
-What is bootstrapping in operating systems?
-ANSWER: Bootstrapping is the process of initializing the OS during the startup sequence.
-
----
-
-QUESTION NUMBER: 31
-What is the difference between firmware and an operating system?
-ANSWER:
-- Firmware: Low-level software embedded in hardware.
-- OS: Higher-level software managing the entire system.
-
----
-
-QUESTION NUMBER: 32
-What is the difference between cooperative and preemptive multitasking?
-ANSWER:
-- Cooperative: Processes voluntarily yield control.
-- Preemptive: OS forcibly takes control of processes.
-
----
-
-QUESTION NUMBER: 33
-What are the main types of operating systems?
-ANSWER:
-- Batch OS
-- Time-Sharing OS
-- Distributed OS
-- Real-Time OS
-- Embedded OS
-
----
-
-QUESTION NUMBER: 34
-What is an embedded operating system?
-ANSWER: An OS designed for specialized devices with limited resources, such as IoT devices and appliances.
-
----
-
-QUESTION NUMBER: 35
-What is a hypervisor?
-ANSWER: A hypervisor is software that allows multiple operating systems to run on a single physical machine.
+Data structure Syllabus
+1. Fundamental Data Structures
+1.1 Introduction
+- Basic Terminology (data, information, data type, ADT, etc.)
+- Pointers and Dynamic Memory Allocation (malloc, calloc, free, etc.)
+1.2 Stacks
+- Array-based Stack Implementation
+- Linked List-based Stack Implementation
+- Expression Evaluation and Conversion:
+  - Infix to Postfix / Prefix
+  - Postfix / Prefix Evaluation
+1.3 Queues
+- Array and Linked List Implementations
+- Circular Queue
+- Deque (Double-Ended Queue)
+- Priority Queue
+1.4 Linked Lists
+- Singly Linked List and its Operations
+- Doubly Linked List and its Operations
+- Circular Linked List
+- Two-Way Header List
+2. Non-Linear Data Structures: Trees and Graphs
+2.1 Trees
+- General Trees: Operations and Traversals
+- Binary Trees: Representation and Operations
+- Tree Traversals: Inorder, Preorder, Postorder
+- General Tree to Binary Tree Conversion
+- Huffman's Coding Algorithm
+- Applications of Trees
+2.2 Graphs
+- Graph Representations: Adjacency Matrix & List
+- Graph Traversals: BFS and DFS
+- Spanning Trees
+  - Minimum Spanning Trees (MST)
+  - Kruskal’s Algorithm
+  - Prim’s Algorithm
+- Shortest Path Algorithms
+  - Dijkstra’s Algorithm
+  - Floyd-Warshall Algorithm
+3. Sorting Algorithms and Complexity
+- Asymptotic Notations: Big-O, Theta (Θ), Omega (Ω)
+- Time and Space Complexity of Algorithms
+- Sorting Techniques:
+  - Bubble Sort
+  - Insertion Sort
+  - Selection Sort
+  - Quick Sort
+  - Merge Sort
+4. Advanced Searching and Hashing
+4.1 Advanced Searching
+- Tree Traversals in Search Trees
+- Threaded Binary Search Trees
+- Binary Search Tree (BST): Insertion and Deletion
+- AVL Trees: Concepts and Rotations for Balancing
+4.2 Heaps
+- Min-Heap and Max-Heap
+- Heap Operations: Insert, Delete, Heapify
+4.3 Hashing
+- Hashing Concepts and Terminology
+- Hash Functions: Division, Multiplication, Folding, etc.
+- Collision Resolution Techniques:
+  - Linear Probing
+  - Double Hashing
+  - Bucket Addressing
+  - Rehashing
+5. File Structures
+- Records and Fields
+- File Operations: Creation, Updating, Deletion
+- File Organization Methods:
+  - Sequential
+  - Relative
+  - Indexed Sequential
