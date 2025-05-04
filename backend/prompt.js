@@ -10,6 +10,8 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { combineDocument } from "./utils/combineDocument.js";
 import { formatConversation } from "./utils/formatConversation.js";
+import { correctGrammar } from "./utils/correctGrammar.js";
+import { rewriteQuery } from "./utils/rewriteQuery.js";
 
 // Environment variables
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -31,7 +33,8 @@ const retriever = vectorStore.asRetriever();
 
 // Gemini LLM
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-1.5-pro-latest",
+  model: "gemini-2.0-flash",
+  temperature: 0.5,
   apiKey: GOOGLE_API_KEY,
   maxOutputTokens: 2048,
 });
@@ -39,6 +42,7 @@ const llm = new ChatGoogleGenerativeAI({
 // Prompt Template (includes chat history and context)
 const answerPrompt = ChatPromptTemplate.fromTemplate(
 `You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation.
+you are created by sachin kumar student of Graphic era hill university.
 
 Use both the **context** (knowledge base) and the **conversation history** to answer the user's question.
 
@@ -57,11 +61,13 @@ Current Question:
 Answer:`
 );
 
-
-
 // Main function
 async function answerUserQuestion(userQuestion, chatHistory) {
   try {
+    userQuestion = await correctGrammar(userQuestion);
+    userQuestion = await rewriteQuery(userQuestion);
+    console.log("User Question (original):", userQuestion);
+    console.log("User Question (corrected):", userQuestion);
     const formattedHistory = formatConversation(chatHistory);
 
     // Retrieve context

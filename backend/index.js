@@ -22,13 +22,11 @@ async function generateStory(topic) {
 
   return res.text;
 }
-
 async function embedAndStore() {
   try {
     // file reading
     const file = await readFile("./osEndTerm2023.txt");
     const text = file.toString();
-
     // making chunks
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 500,
@@ -60,7 +58,6 @@ async function embedAndStore() {
       tableName: "documents",
       queryName: "match_documents",
     });
-
     // Store the docs (not plain chunks) in Supabase
     await vectorStore.addDocuments(docs);
     console.log("Documents embedded and stored successfully.");
@@ -78,5 +75,4 @@ async function main() {
     console.error(error);
   }
 }
-
 main().catch(console.error);

@@ -29,14 +29,12 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
   queryName: "match_documents",
 });
 const retriever = vectorStore.asRetriever();
-
 // LLM and prompt
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-1.5-pro-latest",
   apiKey: GOOGLE_API_KEY,
   maxOutputTokens: 2048,
 });
-
 const answerPrompt = ChatPromptTemplate.fromTemplate(
   `You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation.
 
@@ -56,7 +54,6 @@ Current Question:
 
 Answer:`
 );
-
 // Main logic
 async function answerUserQuestion(userQuestion, chatHistory) {
   const formattedHistory = formatConversation(chatHistory);
