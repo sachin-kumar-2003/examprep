@@ -31,8 +31,10 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
 const retriever = vectorStore.asRetriever();
 // LLM and prompt
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-1.5-pro-latest",
+  // model: "gemini-2.0-flash",
+  model: "gemini-2.0-flash",
   apiKey: GOOGLE_API_KEY,
+  temperature: 0.1,
   maxOutputTokens: 2048,
 });
 const answerPrompt = ChatPromptTemplate.fromTemplate(
@@ -40,7 +42,11 @@ const answerPrompt = ChatPromptTemplate.fromTemplate(
 
 Use both the context (knowledge base) and the conversation history to answer the user's question.
 
-If you don't know the answer based on either, say:
+if it is not related to BCA/MCA then you can search the context and conversation history to find the answer.
+you can also answer by yourself if you know the answer.
+
+
+if it not related to BCA/MCA then you can say:
 "Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
 
 Context:

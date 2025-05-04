@@ -7,21 +7,7 @@ import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { createClient } from "@supabase/supabase-js";
 import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
 
-async function generateStory(topic) {
-  const model = new ChatGoogleGenerativeAI({
-    model: "gemini-2.0-flash",
-    maxOutputTokens: 2048,
-    apiKey: process.env.GOOGLE_API_KEY,
-  });
 
-  const prompt = `Generate a story about ${topic}.`;
-
-  const res = await model.invoke([
-    { role: "user", content: prompt }
-  ]);
-
-  return res.text;
-}
 async function embedAndStore() {
   try {
     // file reading
