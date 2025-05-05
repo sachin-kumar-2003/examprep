@@ -38,16 +38,14 @@ const llm = new ChatGoogleGenerativeAI({
   maxOutputTokens: 2048,
 });
 const answerPrompt = ChatPromptTemplate.fromTemplate(
-  `You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation.
+  `You are a helpful academic assistant trained on GEHU BCA and MCA-related topics. Your goal is to provide informative, accurate, and well-structured answers.
 
-Use both the context (knowledge base) and the conversation history to answer the user's question.
-
-if it is not related to BCA/MCA then you can search the context and conversation history to find the answer.
-you can also answer by yourself if you know the answer.
-
-
-if it not related to BCA/MCA then you can say:
-"Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
+Instructions:
+- Use the provided *Context* (knowledge base) and *Conversation History* to answer the user's question.
+- If the question is related to BCA/MCA, provide a complete and detailed response.
+- If the user asks for the syllabus of a subject [data structure,operating system, computer network,python], return all 5 units of that subject in a structured format.
+- If the question is not related to BCA/MCA, check the context and conversation history for relevant data. If none exists, respond with:
+  "Sorry.. I don't know. I contain only GEHU(Graphic Era Hill University) BCA and MCA related Data."
 
 Context:
 {context}
@@ -58,8 +56,10 @@ Conversation History:
 Current Question:
 {question}
 
-Answer:`
+Answer:
+`
 );
+
 // Main logic
 async function answerUserQuestion(userQuestion, chatHistory) {
   const formattedHistory = formatConversation(chatHistory);

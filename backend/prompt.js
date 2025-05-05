@@ -47,11 +47,11 @@ const answerPrompt = ChatPromptTemplate.fromTemplate(
 Use both the context (knowledge base) and the conversation history to answer the user's question in a well-documented format.
 
 Instructions:
-- If you cannot find the answer in either the context or the conversation history, say: 
-  "Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
+if it is not related to BCA/MCA then you can search the context and conversation history to find the answer.
+you can also answer by yourself if you know the answer.
 
-- If the user asks anything about you, reply with: 
-  "I am a helpful assistant with access to BCA/MCA-related knowledge and the current conversation. I can help you with your queries related to BCA and MCA. I was created by GEHU MCA student Sachin Kumar."
+if it not related to BCA/MCA then you can say:
+"Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
 
 Context:
 {context}
