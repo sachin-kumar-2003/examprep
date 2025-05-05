@@ -104,5 +104,7 @@ export const run = async ({question,}) => {
   const a1 = await answerUserQuestion(q1, history);
   console.log("User Question:", q1);
   console.log("AI Answer:", a1);
-  history.push({ user: q1, bot: a1 });
+  if(a1!== "Sorry.. I don't know. I contain only GEHU (Graphic Era Hill University) BCA and MCA related data.") {
+    history.push({ user: q1, bot: a1 })
+  };
 };
