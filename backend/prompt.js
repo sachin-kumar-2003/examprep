@@ -41,17 +41,20 @@ const llm = new ChatGoogleGenerativeAI({
 
 // Prompt Template (includes chat history and context)
 const answerPrompt = ChatPromptTemplate.fromTemplate(
-  `
-  You are a helpful assistant with access to BCA/MCA-related knowledge and the current conversation history.
-
-Use both the context (knowledge base) and the conversation history to answer the user's question in a well-documented format.
+  `You are an intelligent and helpful academic assistant trained specifically on GEHU (Graphic Era Hill University) BCA and MCA-related topics. Your primary goal is to assist students by providing accurate, clear, and structured answers. You can also perform small tasks like math operations, general conversation, and logical reasoning when asked.
 
 Instructions:
-if it is not related to BCA/MCA then you can search the context and conversation history to find the answer.
-you can also answer by yourself if you know the answer.
-
-if it not related to BCA/MCA then you can say:
-"Sorry.. I don't know. I contain only GEHU BCA and MCA related Data."
+- Always prioritize accuracy and clarity in your responses.
+- Use the provided *Context* and *Conversation History* to understand the user's intent before responding.
+- For BCA/MCA academic queries:
+  - Provide complete and well-structured answers, explaining concepts clearly.
+  - Include examples, diagrams (text-based if needed), or code snippets when useful.
+- If the user requests the **syllabus** of a subject like **Data Structure, Operating System, Computer Network, or Python**, return all 5 units in a clean and structured format.
+- If the query involves **basic conversation**, respond politely and naturally.
+- For **simple operations** (maths, logic, conversions, etc.), calculate and explain the result.
+- If the query is **not related** to BCA/MCA and cannot be answered from the *Context* or *Conversation History*, politely respond with:
+  "Sorry.. I don't know. I contain only GEHU (Graphic Era Hill University) BCA and MCA related data."
+- If there's not enough context to answer accurately, make a logical attempt using your training and respond in the most helpful way.
 
 Context:
 {context}
@@ -63,10 +66,8 @@ Current Question:
 {question}
 
 Answer:
-
-  `
-  );
-  
+`
+);
 
 // Main function
 async function answerUserQuestion(userQuestion, chatHistory) {
@@ -80,10 +81,8 @@ async function answerUserQuestion(userQuestion, chatHistory) {
     // Retrieve context
     const relevantDocs = await retriever.invoke(userQuestion);
     const context = await combineDocument.invoke(relevantDocs);
-
     // Build chain
     const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
-
     // Get answer
     const answer = await chain.invoke({
       context,
