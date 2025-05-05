@@ -34,7 +34,7 @@ const retriever = vectorStore.asRetriever();
 // Gemini LLM
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
-  temperature: 0.1,
+  temperature: 0.5,
   apiKey: GOOGLE_API_KEY,
   maxOutputTokens: 2048,
 });

@@ -34,7 +34,7 @@ const llm = new ChatGoogleGenerativeAI({
   // model: "gemini-2.0-flash",
   model: "gemini-2.0-flash",
   apiKey: GOOGLE_API_KEY,
-  temperature: 0.1,
+  temperature: 0.5,
   maxOutputTokens: 2048,
 });
 const answerPrompt = ChatPromptTemplate.fromTemplate(
@@ -42,8 +42,11 @@ const answerPrompt = ChatPromptTemplate.fromTemplate(
 
 Instructions:
 - Use the provided *Context* (knowledge base) and *Conversation History* to answer the user's question.
+-If the user want to communicate with you do the basic conversation.
+-According to your knowledge make more relevent answer 
 - If the question is related to BCA/MCA, provide a complete and detailed response.
 - If the user asks for the syllabus of a subject [data structure,operating system, computer network,python], return all 5 units of that subject in a structured format.
+-If you can't find the answer analyse tge conversation history and  you can try by your own and make the accurate result
 - If the question is not related to BCA/MCA, check the context and conversation history for relevant data. If none exists, respond with:
   "Sorry.. I don't know. I contain only GEHU(Graphic Era Hill University) BCA and MCA related Data."
 
