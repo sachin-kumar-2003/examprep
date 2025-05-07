@@ -52,13 +52,13 @@ const ChatWindow = () => {
         ...updatedMessages,
         {
           role: "bot",
-          content: data.answer || "⚠️ No response from server.",
+          content: data.answer || "No response from server.",
         },
       ]);
     } catch (error) {
       setMessages([
         ...updatedMessages,
-        { role: "bot", content: "❌ Error: Could not reach server." },
+        { role: "bot", content: "Error: Could not reach server." },
       ]);
     }
 
