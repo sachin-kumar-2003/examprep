@@ -8,7 +8,7 @@ const NavBar = () => {
     <nav className="w-full max-w-screen overflow-x-hidden px-4 py-3 bg-white shadow-[0px_4px_10px_rgba(0,0,0,0.1)] border border-gray-200 rounded-lg">
       <div className="flex flex-wrap items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="bg-purple-500 p-2 rounded-full max-[480px]:hidden">
+          <div className="bg-purple-500 p-2 rounded-full ">
             <svg
               className="w-6 h-6 text-white"
               fill="none"
