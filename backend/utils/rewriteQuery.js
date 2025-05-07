@@ -1,36 +1,51 @@
-// rewriteQuery.js
+// for query rewriting
 import { config } from "dotenv";
-config();
+config({ path: "backend/.env" });
 
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
+const googleApiKey=process.env.GOOGLE_API_KEY;
+console.log("DEBUG: GOOGLE_API_KEY =", googleApiKey);
+if (!googleApiKey) {
+  console.error("GOOGLE_API_KEY is not set in the environment variables.");
+  process.exit(1);
+}
 //llm setup
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
-  apiKey: process.env.GOOGLE_API_KEY,
+  apiKey: googleApiKey,
   temperature: 0.5,
   maxOutputTokens: 1024,
 });
 
 
 const rewritePrompt = PromptTemplate.fromTemplate(`
-You are a smart assistant that rewrites vague or short queries into clear, detailed, and complete questions.
+Perform query expansion. If there are multiple common ways of phrasing a user question
+or common synonyms for key words in the question, make sure to return multiple versions
+of the query with the different phrasings.
 
+If there are acronyms or words you are not familiar with, do not try to rephrase them.
+
+Return 3 different versions of the question
 Original Query: "{query}"
 Rewritten Query:
 `);
+// exam
 let originalQuery = `What is the weather?`;
-await rewriteQuery(originalQuery).then(console.log); // Example usage
-// Function to rewrite the query
+await rewriteQuery(originalQuery).then((result) => {
+  console.log("DEBUG: Rewritten query output:", result);
+});
+// function 
 export async function rewriteQuery(originalQuery) {
   try {
     const chain = rewritePrompt.pipe(llm).pipe(new StringOutputParser());
     const rewritten = await chain.invoke({ query: originalQuery });
+    console.log("DEBUG: rewriteQuery result =", rewritten);
     return rewritten.trim();
   } catch (error) {
-    console.error("Query rewrite error:", error.message);
+    console.error("query rewriting message =", error.message);
     return originalQuery;
   }
 }
