@@ -24,7 +24,7 @@ of the query with the different phrasings.
 
 If there are acronyms or words you are not familiar with, do not try to rephrase them.
 
-Return 3 different versions of the question
+Return 5 different versions of the question
 Original Query: "{query}"
 Rewritten Query:
 `);
