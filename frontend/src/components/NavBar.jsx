@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaGithub } from "react-icons/fa"; // GitHub Icon
-import { FiVideo } from "react-icons/fi"; // Video Icon
+import { FaGithub } from "react-icons/fa"; 
+import { FiVideo } from "react-icons/fi"; 
 
 const NavBar = () => {
   return (
