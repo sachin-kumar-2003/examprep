@@ -82,14 +82,14 @@ async function answerUserQuestion(userQuestion, chatHistory) {
   return answer;
 }
 
-// Express Server Setup
+// server
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Chat API Endpoint
+// chatting
 app.post("/api/chat", async (req, res) => {
   const { message, history } = req.body;
   try {
@@ -101,7 +101,7 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Start server
+// home test
 
 app.get("/", (req, res) => {
   res.send("Hello from the backend!");
