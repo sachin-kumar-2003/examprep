@@ -7,11 +7,7 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
 const googleApiKey=process.env.GOOGLE_API_KEY;
-console.log("DEBUG: GOOGLE_API_KEY =", googleApiKey);
-if (!googleApiKey) {
-  console.error("GOOGLE_API_KEY is not set in the environment variables.");
-  process.exit(1);
-}
+
 //llm setup
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
