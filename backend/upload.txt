@@ -1,0 +1,102 @@
+JAVA SYLLABUS
+Unit-1: Java classes, Arrays, and String Handling
+Java Classes:
+* Generic form of JAVA class
+* Simple JAVA class program
+* Objects - declaration and instantiation
+* Methods - Adding methods to a class, returning a value, passing parameters to a method
+* Constructor - Default, Parameterized constructor, "this" keyword within constructor and methods
+* Overloading Methods and Constructors
+* Static variables, methods
+* Nested and Inner classes
+* Command line arguments
+* Variable length arguments
+* Garbage Collection
+Arrays and String Handling:
+* Arrays one and two dimensional
+* Array Objects and Wrapper Classes
+* String literals
+* String concatenation
+* String comparison (few frequently used methods) - equals() and equalsIgnoreCase(), regionMatches(), startsWith() and endsWith(), compareTo()
+* String modifying methods - substring(), concat(), replace(), trim()
+* StringBuffer methods - length() and capacity(), setLength(), charAt(), setCharAt(), getChars(), append(), insert() and reverse(), delete() and deleteCharAt(), replace() and substring()
+* StringBuilder
+
+JAVA SYLLABUS
+Unit-2: Inheritance, Interfaces, and Packages
+Inheritance:
+* Inheritance basics
+* Access Control - private, public, default, and protected
+* Single and Multilevel inheritance JAVA program
+* Order of execution of constructors in multilevel
+* Usage of super keyword
+* Method overriding
+* Polymorphism - Dynamic method dispatch
+* Abstract class
+* Final Keyword
+Interfaces and Packages:
+* Defining an interface
+* Implementing interface
+* Multilevel Interface Inheritance
+* Difference between Abstract class and Interface
+
+
+JAVA SYLLABUS
+Unit-3: Exception Handling, Overview of Threads, Java I/O Streams, Networking and Event Handling
+Exception Handling and Threads
+* Exceptions and1 Exception Handling - Using try, catch, and finally, Catching Multiple Exceptions
+* Throwing Exceptions - throw and throws clause
+* JAVA built-in exceptions
+* Creating own exception subclasses
+* Concept of try with resource
+* Overview of threads and synchronization
+Overview of Java I/O Streams, Networking, and event handling
+* Byte streams Classes - InputStream, OutputStream, FileInputStream, FileOutputStream
+* ByteArrayInputStream, ByteArrayOutputStream
+* BufferedByteStream classes - BufferedInputStream, BufferedOutputStream
+* Character Streams - Reader, Writer, FileReader, FileWriter, BufferedReader, BufferedWriter
+* Object Serialization
+* Overview of Networking Concepts in Java
+* Delegation Event Model in Java
+
+
+JAVA SYLLABUS
+Unit 4: Servlets and Handling Client Requests and Servlets Responses
+Servlets:
+* Servlets basics, Advantages of Servlets
+* Servlet API
+* Basic structure of a Servlet - Servlet generating plain text, Servlet generating HTML
+* Servlet Life Cycle, Single Thread Model Interface
+Handling Client Requests and Servlets Responses
+* Handling Client Request
+* Handling Form data with doGet and doPost methods
+* HTTP Request Headers
+* Generating Server Response
+* HTTP Status code
+* HTTP Response headers
+* Examples for handling Client Requests and Servlet Responses
+
+JAVA SYLLABUS
+unit-5: Cookies and Sessions, Introduction to JSP, JavaBeans, and JDBC
+Cookies and Sessions:
+* Overview of Cookies
+* Advantages and disadvantages of cookies
+* Cookie class and methods
+* Creating, reading, and deleting Cookies
+* Session Tracking - Overview of Sessions
+* Creating sessions
+* Overview of Packages
+* Jar files, sub packages, static import
+
+
+
+Introduction to JSP, JavaBeans, and JDBC: 
+Overview of JSP - Need and benefits of JSP, Advantages of JSP over Servlets 
+JSP Architecture 
+Life Cycle of JSP 
+Creating a Simple JSP script 
+Overview of JavaBeans 
+JavaBean Properties and example 
+Overview of JDBC 
+Database Connectivity and Statement Objects 
+Creating a simple JDBC application 

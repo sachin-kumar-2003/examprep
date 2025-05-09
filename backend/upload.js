@@ -11,7 +11,7 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 async function embedAndStore() {
   try {
     // file reading
-    const file = await readFile("./osEndTerm2023.txt");
+    const file = await readFile("./upload.txt");
     const text = file.toString();
     // making chunks
     const textSplitter = new RecursiveCharacterTextSplitter({
