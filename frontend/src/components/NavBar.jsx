@@ -41,7 +41,7 @@ const NavBar = () => {
             GitHub
           </Link>
           <a
-            href="#"
+            href="https://private-user-images.githubusercontent.com/180186804/442484208-eb2ddaaa-68c6-468b-a989-f0de63f7080b.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDY5NDk0NTQsIm5iZiI6MTc0Njk0OTE1NCwicGF0aCI6Ii8xODAxODY4MDQvNDQyNDg0MjA4LWViMmRkYWFhLTY4YzYtNDY4Yi1hOTg5LWYwZGU2M2Y3MDgwYi5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNTExJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUxMVQwNzM5MTRaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT03NTFhZWMyMTMyYjkyODIzNjY4NWFkYjZhZjRlZGNjOTQ3YTNiOTBiYmYzYjg5NzE2NzMyZWRjNzNiZjA2Nzk5JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.5gnz0it2QdMhQrWf57cceNJQiosupeQRFCon1dmddyA"
             className="text-gray-800 font-bold relative after:absolute after:w-full after:h-0.5 after:bg-purple-500 after:bottom-0 after:left-0 after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform max-[425px]:hidden"
           >
             Live Preview
