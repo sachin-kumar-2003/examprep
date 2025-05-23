@@ -61,7 +61,9 @@ const NavBar = () => {
           >
             <FiVideo className="w-6 h-6 text-gray-800 hover:text-purple-500 transition-colors" />
           </a>
-          <button className="px-4 py-2 text-white bg-purple-500 rounded hover:bg-purple-600 transition-shadow hover:shadow-md">
+          <button className="px-4 py-2 text-white bg-purple-500 rounded hover:bg-purple-600 transition-shadow hover:shadow-md" onClick={()=>{
+            alert("Login functionality is not implemented yet.");
+          }}>
             Login
           </button>
         </div>
