@@ -44,6 +44,8 @@ async function embedAndStore() {
       tableName: "documents",
       queryName: "match_documents",
     });
+    console.log("embeddings vectore is ");
+    console.log(docs);
     // Store the docs (not plain chunks) in Supabase
     await vectorStore.addDocuments(docs);
     console.log("Documents embedded and stored successfully.");

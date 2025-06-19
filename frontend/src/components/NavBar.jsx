@@ -55,12 +55,12 @@ const NavBar = () => {
           >
             <FaGithub className="w-6 h-6 text-gray-500 hover:text-gray-800 transition-colors" />
           </Link>
-          <a
-            href="#"
+          <Link
+            to="https://github.com/user-attachments/assets/eb2ddaaa-68c6-468b-a989-f0de63f7080b"
             className="max-[425px]:inline-block hidden"
           >
             <FiVideo className="w-6 h-6 text-gray-800 hover:text-purple-500 transition-colors" />
-          </a>
+          </Link>
           <button className="px-4 py-2 text-white bg-purple-500 rounded hover:bg-purple-600 transition-shadow hover:shadow-md" onClick={()=>{
             alert("Login functionality is not implemented yet.");
           }}>

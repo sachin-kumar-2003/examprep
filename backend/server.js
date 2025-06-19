@@ -29,9 +29,7 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
   queryName: "match_documents",
 });
 const retriever = vectorStore.asRetriever();
-// LLM and prompt
 const llm = new ChatGoogleGenerativeAI({
-  // model: "gemini-2.0-flash",
   model: "gemini-2.0-flash",
   apiKey: GOOGLE_API_KEY,
   temperature: 0.5,
