@@ -46,7 +46,7 @@ const NavBar = () => {
           >
             Live Preview
           </a>
-          {/* Icons for smaller screens */}=
+          {/* Icons for smaller screens */}
           <Link
             to="https://github.com/sachin-kumar-2003"
             className="max-[425px]:inline-block hidden"
