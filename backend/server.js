@@ -118,6 +118,7 @@ app.get("/", (req, res) => {
 
 });
 app.get("/health", (req, res) => {
+  console.log("hey");
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
