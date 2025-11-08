@@ -91,6 +91,7 @@ app.use(express.json());
 
 // Chat API Endpoint
 app.post("/api/chat", async (req, res) => {
+  console.log("hey");
   const { message, history } = req.body;
   try {
     const answer = await answerUserQuestion(message, history);
