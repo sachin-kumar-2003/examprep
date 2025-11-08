@@ -17,24 +17,35 @@ const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const SUPABASE_URL = process.env.SUPERBASE_URL;
 const SUPABASE_API_KEY = process.env.SUPERBASE_API_KEY;
 
+// Validate environment variables
+if (!GOOGLE_API_KEY || !SUPABASE_URL || !SUPABASE_API_KEY) {
+  console.error("Missing required environment variables");
+  process.exit(1);
+}
+
 // Embeddings and Supabase Vector Store
 const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "embedding-001",
   apiKey: GOOGLE_API_KEY,
 });
+
 const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
+
 const vectorStore = new SupabaseVectorStore(embeddings, {
   client,
   tableName: "documents",
   queryName: "match_documents",
 });
+
 const retriever = vectorStore.asRetriever();
+
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.0-flash-exp",
   apiKey: GOOGLE_API_KEY,
   temperature: 0.5,
   maxOutputTokens: 2048,
 });
+
 const answerPrompt = ChatPromptTemplate.fromTemplate(
   `You are a highly intelligent and helpful academic assistant developed specifically for students of GEHU (Graphic Era Hill University) pursuing BCA or MCA. Your core responsibility is to deliver **accurate, complete, and well-structured answers** based on the university syllabus, official materials, and verified academic sources.
 
@@ -72,53 +83,61 @@ Answer:
 `
 );
 
-
-
-
-
 // Main logic
-async function answerUserQuestion(userQuestion, chatHistory) {
-  const formattedHistory = formatConversation(chatHistory);
-  const relevantDocs = await retriever.invoke(userQuestion);
-  const context = await combineDocument.invoke(relevantDocs);
+async function answerUserQuestion(userQuestion, chatHistory = []) {
+  try {
+    const formattedHistory = formatConversation(chatHistory);
+    const relevantDocs = await retriever.invoke(userQuestion);
+    const context = combineDocument(relevantDocs);
 
-  const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
-  const answer = await chain.invoke({
-    context,
-    conv_history: formattedHistory,
-    question: userQuestion,
-  });
-  return answer;
+    const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
+    const answer = await chain.invoke({
+      context,
+      conv_history: formattedHistory,
+      question: userQuestion,
+    });
+    return answer;
+  } catch (error) {
+    console.error("Error in answerUserQuestion:", error);
+    throw error;
+  }
 }
 
-// server
+// Server
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// chatting
+// Chatting endpoint
 app.post("/api/chat", async (req, res) => {
-  console.log("hey");
-  const { message, history } = req.body;
+  const { message, history = [] } = req.body;
+  
+  // Validate input
+  if (!message || typeof message !== 'string') {
+    return res.status(400).json({ error: "Invalid message format" });
+  }
+  
   try {
     const answer = await answerUserQuestion(message, history);
     res.json({ answer });
   } catch (error) {
     console.error("Error processing request:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ 
+      error: "Internal Server Error",
+      message: error.message 
+    });
   }
 });
 
-// home test
-
+// Home test
 app.get("/", (req, res) => {
   res.send("Hello from the backend!");
-
 });
+
+// Health check endpoint
 app.get("/health", (req, res) => {
-  console.log("hey");
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
