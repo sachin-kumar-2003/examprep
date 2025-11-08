@@ -40,7 +40,7 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
 const retriever = vectorStore.asRetriever();
 
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash-exp",
+  model: "gemini-2.0-flash",
   apiKey: GOOGLE_API_KEY,
   temperature: 0.5,
   maxOutputTokens: 2048,
