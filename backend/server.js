@@ -116,6 +116,9 @@ app.get("/", (req, res) => {
   res.send("Hello from the backend!");
 
 });
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
