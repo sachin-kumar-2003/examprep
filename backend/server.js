@@ -14,19 +14,16 @@ import { formatConversation } from "./utils/formatConversation.js";
 
 // ENV
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-const SUPABASE_URL = process.env.SUPERBASE_URL;
-const SUPABASE_API_KEY = process.env.SUPERBASE_API_KEY;
+// FIX 1: Check spelling. Usually it is SUPABASE (not SUPERBASE)
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.SUPERBASE_URL; 
+const SUPABASE_API_KEY = process.env.SUPABASE_API_KEY || process.env.SUPERBASE_API_KEY;
 
-// Validate environment variables
-if (!GOOGLE_API_KEY || !SUPABASE_URL || !SUPABASE_API_KEY) {
-  console.error("Missing required environment variables");
-  process.exit(1);
-}
-
-// Embeddings and Supabase Vector Store
+// Embeddings
 const embeddings = new GoogleGenerativeAIEmbeddings({
-  model: "embedding-001",
+  // FIX 2: Use the correct official model name
+  model: "text-embedding-004", 
   apiKey: GOOGLE_API_KEY,
+  taskType: "retrieval_query", // Optimized for search queries
 });
 
 const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
@@ -34,111 +31,143 @@ const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
 const vectorStore = new SupabaseVectorStore(embeddings, {
   client,
   tableName: "documents",
-  queryName: "match_documents",
+  queryName: "match_documents", // Ensure this function exists in your Supabase SQL
 });
 
 const retriever = vectorStore.asRetriever();
 
+// LLM
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.0-flash", // Good choice
   apiKey: GOOGLE_API_KEY,
   temperature: 0.5,
   maxOutputTokens: 2048,
 });
 
 const answerPrompt = ChatPromptTemplate.fromTemplate(
-  `You are a highly intelligent and helpful academic assistant developed specifically for students of GEHU (Graphic Era Hill University) pursuing BCA or MCA. Your core responsibility is to deliver **accurate, complete, and well-structured answers** based on the university syllabus, official materials, and verified academic sources.
+
+  `You are an intelligent and helpful academic assistant trained specifically on GEHU (Graphic Era Hill University) BCA and MCA-related topics. Your primary goal is to assist students by providing accurate, clear, and structured answers. You can also perform small tasks like math operations, general conversation, and logical reasoning .And also you are made by MCA student of GEHU named 'Sachin kumar'
+
+
 
 Instructions:
-- First, rely on the *Context* (university database content).
-- If the Context lacks information or is incomplete, use your own verified academic knowledge to fill in the gaps without mentioning this explicitly.
-- Always deliver final answers that are complete, coherent, and helpful—even when the input context is limited or partially missing.
 
-Answering Guidelines:
+- Always prioritize accuracy and clarity in your responses.
 
-1. For **BCA/MCA subject-related queries**:
-   - Provide detailed and clear answers with definitions, explanations, examples, diagrams (ASCII/text-based), and code snippets when needed.
-   - If the user asks for the **syllabus** of a subject (e.g., Operating Systems, Python, CN), provide all **5 units** in a well-structured format.
+- Use the provided *Context* and *Conversation History* to understand the user's intent before responding.
 
-2. For **math, logic, or reasoning tasks**:
-   - Solve step-by-step with clear explanations and logical breakdowns.
+- For BCA/MCA academic queries:
 
-3. For **casual or conversational queries**, respond politely, naturally, and helpfully.
+  - Provide complete and well-structured answers, explaining concepts clearly.
 
-4. If the question is **outside the GEHU BCA/MCA academic scope**, respond with:
-   > "Sorry.. I don't know. I contain only GEHU (Graphic Era Hill University) BCA and MCA related data."
+  - Include examples, diagrams (text-based if needed), or code snippets when useful.
 
-5. If someone asks who created you, respond with:
-   > "I was created by an MCA student named Sachin."
+- If the user requests the **syllabus** of a subject like **Data Structure, Operating System, Computer Network, or Python**, return all 5 units in a clean and structured format.
 
-Inputs:
-- Context (retrieved academic database content): {context}
-- Conversation History: {conv_history}
-- Current Question: {question}
+- If the query involves **basic conversation**, respond politely and naturally.
 
-Output:
-- Provide a final, verified, and student-friendly answer by combining database content and academic expertise when necessary.
+- For **simple operations** (maths, logic, conversions, etc.), calculate and explain the result.
+
+- If the query is **not related** to BCA/MCA and cannot be answered from the *Context* or *Conversation History*, politely respond with:
+
+  "Sorry.. I don't know. I contain only GEHU (Graphic Era Hill University) BCA and MCA related data."
+
+- If there's not enough context to answer accurately, make a logical attempt using your training and respond in the most helpful way.
+
+
+
+Context:
+
+{context}
+
+
+
+Conversation History:
+
+{conv_history}
+
+
+
+Current Question:
+
+{question}
+
+
 
 Answer:
+
 `
+
 );
 
 // Main logic
-async function answerUserQuestion(userQuestion, chatHistory = []) {
-  try {
-    const formattedHistory = formatConversation(chatHistory);
-    const relevantDocs = await retriever.invoke(userQuestion);
-    const context = combineDocument(relevantDocs);
+async function answerUserQuestion(userQuestion, chatHistory) {
 
-    const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
-    const answer = await chain.invoke({
-      context,
-      conv_history: formattedHistory,
-      question: userQuestion,
-    });
-    return answer;
-  } catch (error) {
-    console.error("Error in answerUserQuestion:", error);
-    throw error;
-  }
+  const formattedHistory = formatConversation(chatHistory);
+
+  const relevantDocs = await retriever.invoke(userQuestion);
+
+  const context = await combineDocument.invoke(relevantDocs);
+
+
+
+  const chain = answerPrompt.pipe(llm).pipe(new StringOutputParser());
+
+  const answer = await chain.invoke({
+
+    context,
+
+    conv_history: formattedHistory,
+
+    question: userQuestion,
+
+  });
+
+  return answer;
+
 }
 
-// Server
+
+
+// Express Server Setup
+
 const app = express();
-const port = process.env.PORT || 3000;
+
+const port = process.env.PORT || 5000;
+
+
 
 app.use(cors());
+
 app.use(express.json());
 
-// Chatting endpoint
-app.post("/api/chat", async (req, res) => {
-  const { message, history = [] } = req.body;
-  
-  // Validate input
-  if (!message || typeof message !== 'string') {
-    return res.status(400).json({ error: "Invalid message format" });
-  }
-  
-  try {
-    const answer = await answerUserQuestion(message, history);
-    res.json({ answer });
-  } catch (error) {
-    console.error("Error processing request:", error);
-    res.status(500).json({ 
-      error: "Internal Server Error",
-      message: error.message 
-    });
-  }
-});
 
-// Home test
+
+// Chat API Endpoint
+
+app.post("/api/chat", async (req, res) => {
+
+  console.log("hey");
+
+  const { message, history } = req.body;
+
+  try {
+
+    const answer = await answerUserQuestion(message, history);
+
+    res.json({ answer });
+
+  } catch (error) {
+
+    console.error("Error processing request:", error);
+
+    res.status(500).json({ error: "Internal Server Error" });
+
+  }
+
+});
 app.get("/", (req, res) => {
   res.send("Hello from the backend!");
-});
-
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 app.listen(port, () => {
