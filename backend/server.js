@@ -21,7 +21,7 @@ const SUPABASE_API_KEY = process.env.SUPABASE_API_KEY || process.env.SUPERBASE_A
 // Embeddings
 const embeddings = new GoogleGenerativeAIEmbeddings({
   // FIX 2: Use the correct official model name
-  model: "text-embedding-004", 
+  model: "gemini-embedding-001", 
   apiKey: GOOGLE_API_KEY,
   taskType: "retrieval_query", // Optimized for search queries
 });
