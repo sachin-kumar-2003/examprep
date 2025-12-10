@@ -14,14 +14,12 @@ import { formatConversation } from "./utils/formatConversation.js";
 
 // ENV
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-// FIX 1: Check spelling. Usually it is SUPABASE (not SUPERBASE)
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.SUPERBASE_URL; 
 const SUPABASE_API_KEY = process.env.SUPABASE_API_KEY || process.env.SUPERBASE_API_KEY;
 
 // Embeddings
 const embeddings = new GoogleGenerativeAIEmbeddings({
-  // FIX 2: Use the correct official model name
-  model: "gemini-embedding-001", 
+  model: "text-embedding-004", 
   apiKey: GOOGLE_API_KEY,
   taskType: "retrieval_query", // Optimized for search queries
 });
