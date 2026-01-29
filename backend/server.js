@@ -19,7 +19,7 @@ const SUPABASE_API_KEY = process.env.SUPERBASE_API_KEY;
 
 // Embeddings and Supabase Vector Store
 const embeddings = new GoogleGenerativeAIEmbeddings({
-  model: "embedding-001",
+  model: "gemini-embedding-001",
   apiKey: GOOGLE_API_KEY,
 });
 const client = createClient(SUPABASE_URL, SUPABASE_API_KEY);
@@ -30,7 +30,7 @@ const vectorStore = new SupabaseVectorStore(embeddings, {
 });
 const retriever = vectorStore.asRetriever();
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash",
+  model: "gemini-3-flash-preview",
   apiKey: GOOGLE_API_KEY,
   temperature: 0.5,
   maxOutputTokens: 512,
@@ -62,8 +62,8 @@ Answering Guidelines:
 
 Inputs:
 - Context (retrieved academic database content): {context}
-- Conversation History: ${conv_history}
-- Current Question: ${question}
+- Conversation History: conv_history
+- Current Question: {question}
 
 Output:
 - Provide a final, verified, and student-friendly answer by combining database content and academic expertise when necessary.
