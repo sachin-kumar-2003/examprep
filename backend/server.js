@@ -33,7 +33,7 @@ const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
   apiKey: GOOGLE_API_KEY,
   temperature: 0.5,
-  maxOutputTokens: 2048,
+  maxOutputTokens: 512,
 });
 const answerPrompt = ChatPromptTemplate.fromTemplate(
   `You are a highly intelligent and helpful academic assistant developed specifically for students of GEHU (Graphic Era Hill University) pursuing BCA or MCA. Your core responsibility is to deliver **accurate, complete, and well-structured answers** based on the university syllabus, official materials, and verified academic sources.
@@ -62,8 +62,8 @@ Answering Guidelines:
 
 Inputs:
 - Context (retrieved academic database content): {context}
-- Conversation History: {conv_history}
-- Current Question: {question}
+- Conversation History: ${conv_history}
+- Current Question: ${question}
 
 Output:
 - Provide a final, verified, and student-friendly answer by combining database content and academic expertise when necessary.
